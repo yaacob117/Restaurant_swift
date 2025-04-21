@@ -23,7 +23,7 @@ class MenuItemDetailViewController: UIViewController {
     /// Precio del alimento
     @IBOutlet weak var priceLabel: UILabel!
     
-    //// Descripción del alimento
+    /// Descripción del alimento
     @IBOutlet weak var descriptionLabel: UILabel!
     
     /// Botón para ordenar el alimento
@@ -31,46 +31,46 @@ class MenuItemDetailViewController: UIViewController {
     
     /// Acción llamada cuando el usuario presiona el botón Agregar al Pedido
     @IBAction func addToOrderButtonTapped(_ sender: UIButton) {
-        // animación rápida de rebote después de presionar el botón
+        // Animación rápida de rebote después de presionar el botón
         UIView.animate(withDuration: 0.3) {
             self.addToOrderButton.transform = CGAffineTransform(scaleX: 3, y: 3)
             self.addToOrderButton.transform = CGAffineTransform(scaleX: 1, y: 1)
         }
         
-        // notificar al delegado que el elemento fue agregado al pedido
+        // Notificar al delegado que el elemento fue agregado al pedido
         delegate?.added(menuItem: menuItem)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // actualizar la pantalla con los valores de menuItem
+        // Actualizar la pantalla con los valores de menuItem
         updateUI()
         
-        // configurar el delegado
+        // Configurar el delegado
         setupDelegate()
     }
     
     /// Actualizar las propiedades de los outlets para que coincidan con los valores de menuItem
     func updateUI() {
-        // el nombre del alimento
+        // El nombre del alimento
         titleLabel.text = menuItem.name
         
-        // precio del alimento
+        // Precio del alimento
         priceLabel.text = String(format: "$%.2f", menuItem.price)
         
-        // descripción detallada del alimento
+        // Descripción detallada del alimento
         descriptionLabel.text = menuItem.description
         
-        // hacer que las esquinas del botón sean redondeadas
+        // Hacer que las esquinas del botón sean redondeadas
         addToOrderButton.layer.cornerRadius = 5
         
-        // obtener la imagen para el elemento del menú
+        // Obtener la imagen para el elemento del menú
         MenuController.shared.fetchImage(url: menuItem.imageURL) { image in
-            // verificar que la imagen se haya cargado
+            // Verificar que la imagen se haya cargado
             guard let image = image else { return }
             
-            // asignar la imagen a la vista de imagen en el hilo principal
+            // Asignar la imagen a la vista de imagen en el hilo principal
             DispatchQueue.main.async {
                 self.imageView.image = image
             }
@@ -79,7 +79,7 @@ class MenuItemDetailViewController: UIViewController {
     
     /// Configurar el delegado para que el elemento seleccionado se pase al pedido más tarde
     func setupDelegate() {
-        // encontrar el controlador de vista de tabla de pedidos a través del controlador de navegación
+        // Encontrar el controlador de vista de tabla de pedidos a través del controlador de navegación
         if let navController = tabBarController?.viewControllers?.last as? UINavigationController,
             let orderTableViewController = navController.viewControllers.first as? OrderTableViewController {
             delegate = orderTableViewController
@@ -90,7 +90,6 @@ class MenuItemDetailViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Liberar cualquier recurso que pueda ser recreado.
     }
-    
 
     /*
     // MARK: - Navegación

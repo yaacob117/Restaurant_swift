@@ -1,17 +1,17 @@
 //
-//  IntermediaryModels.swift
+//  ModelosIntermedios.swift
 //  Restaurant
 //
 
 // Corresponde a las claves devueltas por la API bajo categorías
-struct Categories: Codable {
-    let categories: [String]
+struct Categorías: Codable {
+    let categorías: [String]
 }
 
-struct PreparationTime: Codable {
-    let prepTime: Int
+struct TiempoPreparación: Codable {
+    let tiempo: Int
     
     enum CodingKeys: String, CodingKey {
-        case prepTime = "preparation_time"
+        case tiempo = "preparation_time"
     }
 }

@@ -14,7 +14,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         // directorio temporal para una caché
-        let temporaryDirectory = NSTemporaryDirectory()
+        let directorioTemporal = NSTemporaryDirectory()
         
         // crear una caché usando 25 megabytes de memoria y 50 megabytes de disco
         let urlCache = URLCache(memoryCapacity: 25_000_000, diskCapacity: 50_000_000, diskPath: temporaryDirectory)

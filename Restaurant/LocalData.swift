@@ -8,10 +8,10 @@ import Foundation
 /// Usado para proporcionar datos locales con fines de depuración
 struct LocalData {
     /// Usar datos locales en lugar del servidor remoto
-    static let isLocal = true
+    static let esLocal = true
     
     /// Lista de categorías que la aplicación debe devolver
-    static let categories = [
+    static let categorias = [
         "appetizers",
         "entrees",
     ]

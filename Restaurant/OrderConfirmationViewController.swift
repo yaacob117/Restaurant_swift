@@ -1,4 +1,3 @@
-//
 //  OrderConfirmationViewController.swift
 //  Restaurant
 //
@@ -16,10 +15,10 @@ class OrderConfirmationViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // verificar si se necesita una "s" al final para plural
+        // Verificar si se necesita una "s" al final para plural
         let s = minutes! == 1 ? "" : "s"
 
-        // mensaje al usuario con el tiempo restante
+        // Mensaje al usuario con el tiempo restante
         timeRemainingLabel.text = "¡Gracias por tu pedido! El tiempo de espera es aproximadamente de \(minutes!) minuto\(s)."
     }
 

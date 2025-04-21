@@ -20,32 +20,32 @@ class MenuTableViewController: UITableViewController {
         
         // Cargar el menú para una categoría dada
         MenuController.shared.fetchMenuItems(categoryName: category) { (menuItems) in
-            // si realmente obtuvimos los elementos del menú
+            // Si realmente obtuvimos los elementos del menú
             if let menuItems = menuItems {
-                // actualizar la interfaz
+                // Actualizar la interfaz
                 self.updateUI(with: menuItems)
             }
         }
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        // ajustar las etiquetas de detalle (precio)
+        // Ajustar las etiquetas de detalle (precio)
         fitDetailLabels()
     }
     
     override func viewWillLayoutSubviews() {
-        // ajustar las etiquetas de detalle (precio)
+        // Ajustar las etiquetas de detalle (precio)
         fitDetailLabels()
     }
     
     /// Establecer la propiedad y actualizar la interfaz
     func updateUI(with menuItems: [MenuItem]) {
-        // tenemos que volver a la cola principal desde la cola de fondo donde se ejecutan las solicitudes de red
+        // Tenemos que volver a la cola principal desde la cola de fondo donde se ejecutan las solicitudes de red
         DispatchQueue.main.async {
-            // recordar los elementos del menú para mostrarlos en la tabla
+            // Recordar los elementos del menú para mostrarlos en la tabla
             self.menuItems = menuItems
             
-            // recargar la tabla
+            // Recargar la tabla
             self.tableView.reloadData()
         }
     }
@@ -58,62 +58,62 @@ class MenuTableViewController: UITableViewController {
     // MARK: - Fuente de datos de la tabla
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // solo hay una sección
+        // Solo hay una sección
         return 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // el número de celdas es igual al tamaño del array de elementos del menú
+        // El número de celdas es igual al tamaño del array de elementos del menú
         return menuItems.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        // reutilizar la celda prototipo de la lista del menú
+        // Reutilizar la celda prototipo de la lista del menú
         let cell = tableView.dequeueReusableCell(withIdentifier: "MenuCellIdentifier", for: indexPath)
 
-        // configurar la celda con los datos de la lista del menú
+        // Configurar la celda con los datos de la lista del menú
         configure(cell: cell, forItemAt: indexPath)
 
         return cell
     }
     
     /// Configurar la celda de la tabla con los datos de la lista del menú
-    /// - parámetros:
+    /// - Parámetros:
     ///     - cell: La celda a configurar
     ///     - indexPath: Una ruta de índice que localiza una fila en tableView
     func configure(cell: UITableViewCell, forItemAt indexPath: IndexPath) {
-        // obtener el elemento del menú necesario para la fila correspondiente de la tabla
+        // Obtener el elemento del menú necesario para la fila correspondiente de la tabla
         let menuItem = menuItems[indexPath.row]
         
-        // la etiqueta izquierda de la celda debe mostrar el nombre del elemento
+        // La etiqueta izquierda de la celda debe mostrar el nombre del elemento
         cell.textLabel?.text = menuItem.name
         
-        // la etiqueta derecha muestra el precio junto con el símbolo de la moneda
+        // La etiqueta derecha muestra el precio junto con el símbolo de la moneda
         cell.detailTextLabel?.text = String(format: "$%.2f", menuItem.price)
         
-        // obtener la imagen del servidor
+        // Obtener la imagen del servidor
         MenuController.shared.fetchImage(url: menuItem.imageURL) { image in
-            // verificar que la imagen se obtuvo correctamente
+            // Verificar que la imagen se obtuvo correctamente
             guard let image = image else { return }
             
-            // volver al hilo principal después de la solicitud de red en segundo plano
+            // Volver al hilo principal después de la solicitud de red en segundo plano
             DispatchQueue.main.async {
-                // obtener la ruta de índice actual
+                // Obtener la ruta de índice actual
                 guard let currentIndexPath = self.tableView.indexPath(for: cell) else { return }
                 
-                // verificar si la celda aún no se recicló
+                // Verificar si la celda aún no se recicló
                 guard currentIndexPath == indexPath else { return }
                 
-                // establecer la imagen en miniatura
+                // Establecer la imagen en miniatura
                 cell.imageView?.image = image
                 
-                // ajustar la imagen a la celda
+                // Ajustar la imagen a la celda
                 self.fitImage(in: cell)
             }
         }
     }
     
-    // ajustar la altura de la celda para que las imágenes se vean mejor
+    // Ajustar la altura de la celda para que las imágenes se vean mejor
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 100
     }
@@ -157,15 +157,15 @@ class MenuTableViewController: UITableViewController {
 
     /// Pasa MenuItem a MenuItemDetailViewController antes del segue
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // verifica que este segue sea de MenuTableViewController a MenuItemDetailViewController
+        // Verifica que este segue sea de MenuTableViewController a MenuItemDetailViewController
         if segue.identifier == "MenuDetailSegue" {
-            // podemos convertir de manera segura a MenuItemDetailViewController
+            // Podemos convertir de manera segura a MenuItemDetailViewController
             let menuItemDetailViewController = segue.destination as! MenuItemDetailViewController
             
-            // la fila de la celda seleccionada es el índice para el array de menuItems
+            // La fila de la celda seleccionada es el índice para el array de menuItems
             let index = tableView.indexPathForSelectedRow!.row
             
-            // pasar el menuItem seleccionado al destino MenuItemDetailViewController
+            // Pasar el menuItem seleccionado al destino MenuItemDetailViewController
             menuItemDetailViewController.menuItem = menuItems[index]
         }
     }
