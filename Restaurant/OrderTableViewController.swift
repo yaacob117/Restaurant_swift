@@ -1,81 +1,77 @@
 //
 //  OrderTableViewController.swift
 //  Restaurant
-//
-//  Created by Denis Bystruev on 05/06/2018.
-//  Copyright © 2018 Denis Bystruev. All rights reserved.
-//
-//  View controller for the order list
+//  Controlador de vista para la lista de pedidos
 
 import UIKit
 
 class OrderTableViewController: UITableViewController, AddToOrderDelegate {
     
-    /// The list of ordered items
+    /// La lista de elementos pedidos
     var menuItems = [MenuItem]()
     
-    /// Minutes remaining for the order
+    /// Minutos restantes para el pedido
     var orderMinutes = 0
 
-    /// Alert the user that their order will be submitted if they continue
+    /// Alerta al usuario que su pedido será enviado si continúa
     @IBAction func submitTapped(_ sender: UIBarButtonItem) {
-        // calculate the total order cost
+        // calcular el costo total del pedido
         let orderTotal = menuItems.reduce(0.0) { (result, menuItem) -> Double in
             return result + menuItem.price
         }
         
-        // format the order total price
+        // formatear el precio total del pedido
         let formattedOrder = String(format: "$%2.f", orderTotal)
         
-        // prepare an alert for the user
+        // preparar una alerta para el usuario
         let alert = UIAlertController(
-            title: "Confirm Order",
-            message: "You are about to submit your order with a total of \(formattedOrder)",
+            title: "Confirmar Pedido",
+            message: "Estás a punto de enviar tu pedido con un total de \(formattedOrder)",
             preferredStyle: .alert
         )
         
-        // add upload order action on submit
-        alert.addAction(UIAlertAction(title: "Submit", style: .default) { action in
+        // agregar acción de enviar pedido al confirmar
+        alert.addAction(UIAlertAction(title: "Enviar", style: .default) { action in
             self.uploadOrder()
         })
         
-        // add cancel on dismiss
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        // agregar acción de cancelar al descartar
+        alert.addAction(UIAlertAction(title: "Cancelar", style: .cancel, handler: nil))
         
-        // present the alert for the user about order submission
+        // presentar la alerta al usuario sobre el envío del pedido
         present(alert, animated: true, completion: nil)
     }
     
-    /// Go back to order list when the dismiss button is pressed
+    /// Regresar a la lista de pedidos cuando se presiona el botón de descartar
     @IBAction func unwindToOrderList(segue: UIStoryboardSegue) {
-        // check that we indeed dismissing the confirmation screen
+        // verificar que efectivamente estamos descartando la pantalla de confirmación
         if segue.identifier == "DismissConfirmation" {
-            // clear order menu items
+            // limpiar los elementos del menú del pedido
             menuItems.removeAll()
             
-            // reload the table to show empty list
+            // recargar la tabla para mostrar la lista vacía
             tableView.reloadData()
             
-            // update the number of items in the order list
+            // actualizar el número de elementos en la lista de pedidos
             updateBadgeNumber()
         }
     }
     
-    /// Make the request using the submitOrder() method defined in MenuController
+    /// Realizar la solicitud usando el método submitOrder() definido en MenuController
     func uploadOrder() {
-        // create an array menu IDs selected for the order
+        // crear un array de IDs de menú seleccionados para el pedido
         let menuIds = menuItems.map { $0.id }
         
-        // call submitOrder() from MenuController
+        // llamar a submitOrder() desde MenuController
         MenuController.shared.submitOrder(menuIds: menuIds) { minutes in
-            // return to the main queue as network requests are executed in background
+            // regresar a la cola principal ya que las solicitudes de red se ejecutan en segundo plano
             DispatchQueue.main.async {
-                // check if minutes were returned successfully
+                // verificar si los minutos se devolvieron correctamente
                 if let minutes = minutes {
-                    // remember the minutes remaining
+                    // recordar los minutos restantes
                     self.orderMinutes = minutes
                     
-                    // perform the segue to confirmation screen
+                    // realizar el segue a la pantalla de confirmación
                     self.performSegue(withIdentifier: "ConfirmationSegue", sender: nil)
                 }
             }
@@ -85,166 +81,148 @@ class OrderTableViewController: UITableViewController, AddToOrderDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // display an Edit button in the navigation bar for this view controller.
+        // Mostrar un botón de Editar en la barra de navegación para este controlador de vista.
         navigationItem.leftBarButtonItem = editButtonItem
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        // fit the detail (price) labels
+        // ajustar las etiquetas de detalle (precio)
         fitDetailLabels()
     }
     
     override func viewWillLayoutSubviews() {
-        // fit the detail (price) labels
+        // ajustar las etiquetas de detalle (precio)
         fitDetailLabels()
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        // Liberar cualquier recurso que pueda ser recreado.
     }
 
-    // MARK: - Table view data source
+    // MARK: - Fuente de datos de la tabla
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // the number of rows is equal to the number of items in menuItems array
+        // el número de filas es igual al número de elementos en el array menuItems
         return menuItems.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
-        // reuse the order list prototype cell
+        // reutilizar la celda prototipo de la lista de pedidos
         let cell = tableView.dequeueReusableCell(withIdentifier: "OrderCellIdentifier", for: indexPath)
         
-        // configure the cell with menu list data
+        // configurar la celda con los datos de la lista del menú
         configure(cell: cell, forItemAt: indexPath)
 
         return cell
     }
     
-    /// Configure the cell with order list data
-    /// - parameters:
-    ///     - cell: The cell to be configured
-    ///     - indexPath: An index path locating a row in tableView
+    /// Configurar la celda con los datos de la lista de pedidos
+    /// - parámetros:
+    ///     - cell: La celda a configurar
+    ///     - indexPath: Una ruta de índice que localiza una fila en tableView
     func configure(cell: UITableViewCell, forItemAt indexPath: IndexPath) {
-        // get the needed menu item for corresponding table row
+        // obtener el elemento del menú necesario para la fila correspondiente de la tabla
         let menuItem = menuItems[indexPath.row]
         
-        // the left label of the cell should display the name of the item
+        // la etiqueta izquierda de la celda debe mostrar el nombre del elemento
         cell.textLabel?.text = menuItem.name
         
-        // the right label displays the price along with currency symbol
+        // la etiqueta derecha muestra el precio junto con el símbolo de la moneda
         cell.detailTextLabel?.text = String(format: "$%.2f", menuItem.price)
         
-        // fetch the image from the server
+        // obtener la imagen del servidor
         MenuController.shared.fetchImage(url: menuItem.imageURL) { image in
-            // check that the image was fetched successfully
+            // verificar que la imagen se obtuvo correctamente
             guard let image = image else { return }
             
-            // return to main thread after the network request in background
+            // regresar al hilo principal después de la solicitud de red en segundo plano
             DispatchQueue.main.async {
-                // get the current index path
+                // obtener la ruta de índice actual
                 guard let currentIndexPath = self.tableView.indexPath(for: cell) else { return }
                 
-                // check if the cell was not yet recycled
+                // verificar si la celda aún no se recicló
                 guard currentIndexPath == indexPath else { return }
                 
-                // set the thumbnail image
+                // establecer la imagen en miniatura
                 cell.imageView?.image = image
                 
-                // fit the image to the cell
+                // ajustar la imagen a la celda
                 self.fitImage(in: cell)
             }
         }
     }
     
-    // adjust the cell height to make images look better
+    // ajustar la altura de la celda para que las imágenes se vean mejor
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 100
     }
 
-    // Confirm which items (all) support editing (deleting menu items) of the order table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // All items are editable (deletable)
+    // Confirmar qué elementos (todos) admiten la edición (eliminación de elementos del menú) de la vista de tabla de pedidos.
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: Bool) -> Bool {
+        // Todos los elementos son editables (eliminables)
         return true
     }
 
-    // Support editing the order table view.
+    // Admitir la edición de la vista de tabla de pedidos.
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            // Delete the item from the order list
+            // Eliminar el elemento de la lista de pedidos
             menuItems.remove(at: indexPath.row)
             
-            // Remove the row from the table
+            // Eliminar la fila de la tabla
             tableView.deleteRows(at: [indexPath], with: .fade)
             
-            // Update the number of items on the badge
+            // Actualizar el número de elementos en la insignia
             updateBadgeNumber()
         }
     }
     
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        // fit the detail (price) label in cell
+        // ajustar la etiqueta de detalle (precio) en la celda
         fitDetailLabel(in: cell)
     }
 
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
+    // MARK: - Navegación
 
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    // MARK: - Navigation
-
-    /// Pass order minutes before the segue to order confirmation page
+    /// Pasar los minutos del pedido antes del segue a la página de confirmación del pedido
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // check that we indeed performing the order confirmation seque
+        // verificar que efectivamente estamos realizando el segue de confirmación del pedido
         if segue.identifier == "ConfirmationSegue" {
-            // get the new view controller using segue.destinationViewController.
+            // obtener el nuevo controlador de vista usando segue.destinationViewController.
             let orderConfirmationViewController = segue.destination as! OrderConfirmationViewController
             
-            // pass the minutes remaining to the destination view controller
+            // pasar los minutos restantes al controlador de vista de destino
             orderConfirmationViewController.minutes = orderMinutes
         }
-        // Pass the selected object to the new view controller.
+        // Pasar el objeto seleccionado al nuevo controlador de vista.
     }
     
-    /// Called when menu item is added
+    /// Llamado cuando se agrega un elemento del menú
     func added(menuItem: MenuItem) {
-        // append the menu item to the menuItems array
+        // agregar el elemento del menú al array menuItems
         menuItems.append(menuItem)
         
-        // get the total number of menu items
+        // obtener el número total de elementos del menú
         let count = menuItems.count
         
-        // calculate index path for the last row
+        // calcular la ruta de índice para la última fila
         let indexPath = IndexPath(row: count - 1, section: 0)
         
-        // insert the menu item row to the end of the order table
+        // insertar la fila del elemento del menú al final de la tabla de pedidos
         tableView.insertRows(at: [indexPath], with: .automatic)
         
-        // update the badge with the number of items in the order
+        // actualizar la insignia con el número de elementos en el pedido
         updateBadgeNumber()
     }
     
-    /// Update the badge value of the order tab to match the number of items in the order
+    /// Actualizar el valor de la insignia de la pestaña de pedidos para que coincida con el número de elementos en el pedido
     func updateBadgeNumber() {
-        // get the number of items in the order
+        // obtener el número de elementos en el pedido
         let badgeValue = 0 < menuItems.count ? "\(menuItems.count)" : nil
         
-        // assign the badge value to the order tab
+        // asignar el valor de la insignia a la pestaña de pedidos
         navigationController?.tabBarItem.badgeValue = badgeValue
     }
 }

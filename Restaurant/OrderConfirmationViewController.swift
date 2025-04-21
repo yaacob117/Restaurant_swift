@@ -2,44 +2,40 @@
 //  OrderConfirmationViewController.swift
 //  Restaurant
 //
-//  Created by Denis Bystruev on 07/06/2018.
-//  Copyright © 2018 Denis Bystruev. All rights reserved.
-//
 
 import UIKit
 
 class OrderConfirmationViewController: UIViewController {
 
-    /// Label with time remaining information
+    /// Etiqueta con la información del tiempo restante
     @IBOutlet weak var timeRemainingLabel: UILabel!
     
-    /// Time remaining in minutes
+    /// Tiempo restante en minutos
     var minutes: Int!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // see if s at the end needs to be used for plural
+        // verificar si se necesita una "s" al final para plural
         let s = minutes! == 1 ? "" : "s"
 
-        // message to the user with the time remaining
-        timeRemainingLabel.text = "Thank you for your order!  Your wait time is approximatly \(minutes!) minute\(s)."
+        // mensaje al usuario con el tiempo restante
+        timeRemainingLabel.text = "¡Gracias por tu pedido! El tiempo de espera es aproximadamente de \(minutes!) minuto\(s)."
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        // Liberar cualquier recurso que pueda ser recreado.
     }
     
 
     /*
-    // MARK: - Navigation
+    // MARK: - Navegación
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    // En una aplicación basada en storyboard, a menudo querrás hacer una pequeña preparación antes de la navegación
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+        // Obtener el nuevo controlador de vista usando segue.destinationViewController.
+        // Pasar el objeto seleccionado al nuevo controlador de vista.
     }
     */
-
 }

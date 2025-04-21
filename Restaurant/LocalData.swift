@@ -2,18 +2,15 @@
 //  LocalData.swift
 //  Restaurant
 //
-//  Created by Denis Bystruev on 25/12/2018.
-//  Copyright © 2018 Denis Bystruev. All rights reserved.
-//
 
 import Foundation
 
-/// Used to provide local data for debug purposes
+/// Usado para proporcionar datos locales con fines de depuración
 struct LocalData {
-    /// Use local data instead of remote server
+    /// Usar datos locales en lugar del servidor remoto
     static let isLocal = true
     
-    /// List of categories the app should return
+    /// Lista de categorías que la aplicación debe devolver
     static let categories = [
         "appetizers",
         "entrees",
@@ -23,7 +20,7 @@ struct LocalData {
         MenuItem(
             id: 1,
             name: "Spaghetti and Meatballs",
-            description: "Seasoned meatballs on top of freshly-made spaghetti. Served with a robust tomato sauce.",
+            description: "Albóndigas sazonadas sobre espaguetis recién hechos. Servido con una robusta salsa de tomate.",
             price: 9,
             category: "entrees",
             imageURL: URL(fileURLWithPath: "SpaghettiAndMeatballs")
@@ -31,7 +28,7 @@ struct LocalData {
         MenuItem(
             id: 2,
             name: "Margherita Pizza",
-            description: "Tomato sauce, fresh mozzarella, basil, and extra-virgin olive oil.",
+            description: "Salsa de tomate, mozzarella fresca, albahaca y aceite de oliva virgen extra.",
             price: 10,
             category: "entrees",
             imageURL: URL(fileURLWithPath: "MargheritaPizza")
@@ -39,7 +36,7 @@ struct LocalData {
         MenuItem(
             id: 3,
             name: "Grilled Steelhead Trout Sandwich",
-            description: "Pacific steelhead trout with lettuce, tomato, and red onion.",
+            description: "Trucha arcoíris del Pacífico a la parrilla con lechuga, tomate y cebolla roja.",
             price: 9,
             category: "entrees",
             imageURL: URL(fileURLWithPath: "GrilledSteelheadTroutSandwich")
@@ -47,7 +44,7 @@ struct LocalData {
         MenuItem(
             id: 4,
             name: "Pesto Linguini",
-            description: "Stewed sliced beef with yellow onions and garlic in a vinegar-soy sauce. Served with steamed jasmine rice and sautÃ©ed vegetables.",
+            description: "Carne de res en rodajas guisada con cebollas amarillas y ajo en una salsa de vinagre y soja. Servido con arroz jazmín al vapor y verduras salteadas.",
             price: 9,
             category: "entrees",
             imageURL: URL(fileURLWithPath: "PestoLinguini")
@@ -55,7 +52,7 @@ struct LocalData {
         MenuItem(
             id: 5,
             name: "Chicken Noodle Soup",
-            description: "Delicious chicken simmered alongside yellow onions, carrots, celery, and bay leaves, chicken stock.",
+            description: "Delicioso pollo cocido a fuego lento junto con cebollas amarillas, zanahorias, apio y hojas de laurel, en caldo de pollo.",
             price: 3,
             category: "appetizers",
             imageURL: URL(fileURLWithPath: "ChickenNoodleSoup")
@@ -63,7 +60,7 @@ struct LocalData {
         MenuItem(
             id: 6,
             name: "Italian Salad",
-            description: "Garlic, red onions, tomatoes, mushrooms, and olives on top of romaine lettuce.",
+            description: "Ajo, cebollas rojas, tomates, champiñones y aceitunas sobre lechuga romana.",
             price: 5,
             category: "appetizers",
             imageURL: URL(fileURLWithPath: "ItalianSalad")

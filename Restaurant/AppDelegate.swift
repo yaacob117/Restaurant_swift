@@ -1,10 +1,7 @@
 //
 //  AppDelegate.swift
 //  Restaurant
-//
-//  Created by Denis Bystruev on 05/06/2018.
-//  Copyright © 2018 Denis Bystruev. All rights reserved.
-//
+
 
 import UIKit
 
@@ -16,10 +13,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
-        // temporary directory for a cache
+        // directorio temporal para una caché
         let temporaryDirectory = NSTemporaryDirectory()
         
-        // create a cache using 25 megabytes of memory and 50 megabytes of disk
+        // crear una caché usando 25 megabytes de memoria y 50 megabytes de disco
         let urlCache = URLCache(memoryCapacity: 25_000_000, diskCapacity: 50_000_000, diskPath: temporaryDirectory)
         URLCache.shared = urlCache
         
@@ -27,25 +24,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
-        // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-        // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
+        // Enviado cuando la aplicación está a punto de pasar de activa a inactiva. Esto puede ocurrir por ciertos tipos de interrupciones temporales (como una llamada telefónica entrante o un mensaje SMS) o cuando el usuario cierra la aplicación y comienza la transición al estado de fondo.
+        // Usa este método para pausar tareas en curso, deshabilitar temporizadores e invalidar las devoluciones de llamada de renderizado gráfico. Los juegos deben usar este método para pausar el juego.
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
-        // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
-        // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+        // Usa este método para liberar recursos compartidos, guardar datos del usuario, invalidar temporizadores y almacenar suficiente información del estado de la aplicación para restaurarla a su estado actual en caso de que se termine más tarde.
+        // Si tu aplicación admite ejecución en segundo plano, este método se llama en lugar de applicationWillTerminate: cuando el usuario cierra la aplicación.
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
-        // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
+        // Llamado como parte de la transición del estado de fondo al estado activo; aquí puedes deshacer muchos de los cambios realizados al entrar en el fondo.
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
-        // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+        // Reinicia cualquier tarea que se haya pausado (o que aún no haya comenzado) mientras la aplicación estaba inactiva. Si la aplicación estaba previamente en segundo plano, opcionalmente actualiza la interfaz de usuario.
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
-        // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+        // Llamado cuando la aplicación está a punto de terminar. Guarda datos si es apropiado. Consulta también applicationDidEnterBackground:.
     }
 
 

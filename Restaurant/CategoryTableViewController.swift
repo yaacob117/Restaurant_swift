@@ -2,179 +2,176 @@
 //  CategoryTableViewController.swift
 //  Restaurant
 //
-//  Created by Denis Bystruev on 05/06/2018.
-//  Copyright © 2018 Denis Bystruev. All rights reserved.
-//
-//  View controller for the first screen of the app — menu categories
+//  Controlador de vista para la primera pantalla de la aplicación — categorías del menú
 
 import UIKit
 
 class CategoryTableViewController: UITableViewController {
-    /// Names of the menu categories
+    /// Nombres de las categorías del menú
     var categories = [String]()
     
-    /// Array of menu items to be fetched from the server
+    /// Array de elementos del menú que se obtendrán del servidor
     var menuItems = [MenuItem]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Load the menu for all categories
+        // Cargar el menú para todas las categorías
         MenuController.shared.fetchMenuItems() { (menuItems) in
-            // if we indeed got the menu items
+            // si realmente obtuvimos los elementos del menú
             if let menuItems = menuItems {
-                // compose the list of categories
+                // componer la lista de categorías
                 for item in menuItems {
-                    // get the item's category
+                    // obtener la categoría del elemento
                     let category = item.category
                     
-                    // add category only if it was not added before
+                    // agregar la categoría solo si no se agregó antes
                     if !self.categories.contains(category) {
                         self.categories.append(category)
                     }
                 }
                 
-                // remember the list of items
+                // recordar la lista de elementos
                 self.menuItems = menuItems
                 
-                // update the table with categories
+                // actualizar la tabla con categorías
                 self.updateUI(with: self.categories)
             }
         }
     }
     
-    /// Update the categories table
-    /// - parameters:
-    ///     - categories: Array of categories to display
+    /// Actualizar la tabla de categorías
+    /// - parámetros:
+    ///     - categories: Array de categorías para mostrar
     func updateUI(with categories: [String]) {
-        // since network requests are called on a background thread we need to return to the main thread to update UI immediately
+        // dado que las solicitudes de red se llaman en un hilo de fondo, necesitamos volver al hilo principal para actualizar la interfaz de usuario inmediatamente
         DispatchQueue.main.async {
-            // remember the list of categories to display in the table
+            // recordar la lista de categorías para mostrar en la tabla
             self.categories = categories
             
-            // reload the categories table
+            // recargar la tabla de categorías
             self.tableView.reloadData()
         }
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        // Liberar cualquier recurso que pueda ser recreado.
     }
 
-    // MARK: - Table view data source
+    // MARK: - Fuente de datos de la tabla
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // There is only one section — the list of categories
+        // Solo hay una sección: la lista de categorías
         return 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // number of sections is equal to number of categories we have
+        // el número de secciones es igual al número de categorías que tenemos
         return categories.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        // reuse a category prototype cell
+        // reutilizar una celda prototipo de categoría
         let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCellIdentifier", for: indexPath)
 
-        // Configure the cell...
+        // Configurar la celda...
         configure(cell: cell, forItemAt: indexPath)
 
         return cell
     }
     
-    /// Configure the table cell with category data
-    /// - parameters:
-    ///     - cell: The cell to be configured
-    ///     - indexPath: An index path locating a row in tableView
+    /// Configurar la celda de la tabla con datos de categoría
+    /// - parámetros:
+    ///     - cell: La celda a configurar
+    ///     - indexPath: Una ruta de índice que localiza una fila en tableView
     func configure(cell: UITableViewCell, forItemAt indexPath: IndexPath) {
-        // get the name of the category
+        // obtener el nombre de la categoría
         let categoryString = categories[indexPath.row]
         
-        // make sure it is capitalized to clean up the appearance of categories
+        // asegurarse de que esté en mayúsculas para limpiar la apariencia de las categorías
         cell.textLabel?.text = categoryString.capitalized
         
-        // find the first item in the category for image fetching
+        // encontrar el primer elemento en la categoría para obtener la imagen
         guard let menuItem = menuItems.first(where: { item in
             return item.category == categoryString
         }) else { return }
         
-        // fetch the image from the server
+        // obtener la imagen del servidor
         MenuController.shared.fetchImage(url: menuItem.imageURL) { image in
-            // check that the image was fetched successfully
+            // verificar que la imagen se obtuvo correctamente
             guard let image = image else { return }
             
-            // return to main thread after the network request in background
+            // volver al hilo principal después de la solicitud de red en segundo plano
             DispatchQueue.main.async {
-                // get the current index path
+                // obtener la ruta de índice actual
                 guard let currentIndexPath = self.tableView.indexPath(for: cell) else { return }
                 
-                // check if the cell was not yet recycled
+                // verificar si la celda aún no se recicló
                 guard currentIndexPath == indexPath else { return }
                 
-                // set the thumbnail image
+                // establecer la imagen en miniatura
                 cell.imageView?.image = image
                 
-                // fit the image to the cell
+                // ajustar la imagen a la celda
                 self.fitImage(in: cell)
             }
         }
     }
-    
-    // adjust the cell height to make images look better
+
+    // ajustar la altura de la celda para que las imágenes se vean mejor
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 100
     }
 
     /*
-    // Override to support conditional editing of the table view.
+    // Anular para admitir la edición condicional de la vista de tabla.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
+        // Devuelve false si no deseas que el elemento especificado sea editable.
         return true
     }
     */
 
     /*
-    // Override to support editing the table view.
+    // Anular para admitir la edición de la vista de tabla.
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            // Delete the row from the data source
+            // Eliminar la fila de la fuente de datos
             tableView.deleteRows(at: [indexPath], with: .fade)
         } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
+            // Crear una nueva instancia de la clase apropiada, insertarla en el array y agregar una nueva fila a la vista de tabla
         }    
     }
     */
 
     /*
-    // Override to support rearranging the table view.
+    // Anular para admitir la reorganización de la vista de tabla.
     override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
 
     }
     */
 
     /*
-    // Override to support conditional rearranging of the table view.
+    // Anular para admitir la reorganización condicional de la vista de tabla.
     override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
+        // Devuelve false si no deseas que el elemento sea reordenable.
         return true
     }
     */
 
-    // MARK: - Navigation
+    // MARK: - Navegación
 
-    // Need to pass the name of the chosen category before showing the category menu
+    // Necesitamos pasar el nombre de la categoría elegida antes de mostrar el menú de la categoría
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // make sure the segue is from category to menu table view controllers
+        // asegurarse de que el segue sea de categoría a controladores de vista de tabla de menú
         if segue.identifier == "MenuSegue" {
-            // we can safely downcast to MenuTableViewController
+            // podemos convertir de manera segura a MenuTableViewController
             let menuTableViewController = segue.destination as! MenuTableViewController
             
-            // index in the category array is equal to the selected table row number
+            // el índice en el array de categorías es igual al número de fila seleccionada en la tabla
             let index = tableView.indexPathForSelectedRow!.row
             
-            // store the name of the category in the destination menu table view controller
+            // almacenar el nombre de la categoría en el controlador de vista de tabla de menú de destino
             menuTableViewController.category = categories[index]
         }
     }

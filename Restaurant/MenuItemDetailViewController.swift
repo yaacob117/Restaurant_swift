@@ -2,87 +2,84 @@
 //  MenuItemDetailViewController.swift
 //  Restaurant
 //
-//  Created by Denis Bystruev on 05/06/2018.
-//  Copyright © 2018 Denis Bystruev. All rights reserved.
-//
-//  View controller for the details of a particular food
+//  Controlador de vista para los detalles de un alimento en particular
 
 import UIKit
 
 class MenuItemDetailViewController: UIViewController {
     
-    /// MenuItem received from MenuTableViewController
+    /// MenuItem recibido de MenuTableViewController
     var menuItem: MenuItem!
     
-    /// Delegate to notify that the Add To Order button was tapped
+    /// Delegado para notificar que se presionó el botón Agregar al Pedido
     var delegate: AddToOrderDelegate?
     
-    /// Food name
+    /// Nombre del alimento
     @IBOutlet weak var titleLabel: UILabel!
     
-    /// Food image
+    /// Imagen del alimento
     @IBOutlet weak var imageView: UIImageView!
     
-    /// Food price
+    /// Precio del alimento
     @IBOutlet weak var priceLabel: UILabel!
     
-    //// Food description
+    //// Descripción del alimento
     @IBOutlet weak var descriptionLabel: UILabel!
     
-    /// Food ordering button
+    /// Botón para ordenar el alimento
     @IBOutlet weak var addToOrderButton: UIButton!
     
-    /// Action called when user taps Add To Order button
+    /// Acción llamada cuando el usuario presiona el botón Agregar al Pedido
     @IBAction func addToOrderButtonTapped(_ sender: UIButton) {
-        // quick bounce animation after the button is pressed
+        // animación rápida de rebote después de presionar el botón
         UIView.animate(withDuration: 0.3) {
             self.addToOrderButton.transform = CGAffineTransform(scaleX: 3, y: 3)
             self.addToOrderButton.transform = CGAffineTransform(scaleX: 1, y: 1)
         }
         
-        // notify the delegate that the item was added to the order
+        // notificar al delegado que el elemento fue agregado al pedido
         delegate?.added(menuItem: menuItem)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // update the screen with menuItem values
+        // actualizar la pantalla con los valores de menuItem
         updateUI()
         
-        // setup the delegate
+        // configurar el delegado
         setupDelegate()
     }
     
-    /// Update outlets' properties to match menuItem values
+    /// Actualizar las propiedades de los outlets para que coincidan con los valores de menuItem
     func updateUI() {
-        // the name of the food
+        // el nombre del alimento
         titleLabel.text = menuItem.name
         
-        // food price
+        // precio del alimento
         priceLabel.text = String(format: "$%.2f", menuItem.price)
         
-        // detailed food description
+        // descripción detallada del alimento
         descriptionLabel.text = menuItem.description
         
-        // make button's corners round
+        // hacer que las esquinas del botón sean redondeadas
         addToOrderButton.layer.cornerRadius = 5
         
-        // get the image for the menu item
+        // obtener la imagen para el elemento del menú
         MenuController.shared.fetchImage(url: menuItem.imageURL) { image in
-            // check that we got the image loaded
+            // verificar que la imagen se haya cargado
             guard let image = image else { return }
             
-            // assign the image to the image view in the main thread
+            // asignar la imagen a la vista de imagen en el hilo principal
             DispatchQueue.main.async {
                 self.imageView.image = image
             }
         }
     }
     
-    /// Set the delegate so that the selected item passed to order later
+    /// Configurar el delegado para que el elemento seleccionado se pase al pedido más tarde
     func setupDelegate() {
-        // find order table view controller through navigation controller
+        // encontrar el controlador de vista de tabla de pedidos a través del controlador de navegación
         if let navController = tabBarController?.viewControllers?.last as? UINavigationController,
             let orderTableViewController = navController.viewControllers.first as? OrderTableViewController {
             delegate = orderTableViewController
@@ -91,17 +88,17 @@ class MenuItemDetailViewController: UIViewController {
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        // Liberar cualquier recurso que pueda ser recreado.
     }
     
 
     /*
-    // MARK: - Navigation
+    // MARK: - Navegación
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    // En un storyboard basado en la aplicación, a menudo querrás hacer una pequeña preparación antes de la navegación
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+        // Obtener el nuevo controlador de vista usando segue.destinationViewController.
+        // Pasar el objeto seleccionado al nuevo controlador de vista.
     }
     */
 

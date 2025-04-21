@@ -2,11 +2,8 @@
 //  IntermediaryModels.swift
 //  Restaurant
 //
-//  Created by Denis Bystruev on 06/06/2018.
-//  Copyright © 2018 Denis Bystruev. All rights reserved.
-//
 
-// Correspond to keys returned by the API under categories
+// Corresponde a las claves devueltas por la API bajo categorías
 struct Categories: Codable {
     let categories: [String]
 }

@@ -1,88 +1,84 @@
 //
 //  UITableViewControllerExtension.swift
 //  Restaurant
-//
-//  Created by Denis Bystruev on 07/06/2018.
-//  Copyright © 2018 Denis Bystruev. All rights reserved.
-//
 
 import UIKit
 
 extension UITableViewController {
-    /// Goes through visible cells and fits the detail (price) labels
+    /// Ajusta las etiquetas de detalle (precio) en las celdas visibles
     func fitDetailLabels() {
-        // go through the list of visible cells
+        // recorre la lista de celdas visibles
         for cell in tableView.visibleCells {
             fitDetailLabel(in: cell)
         }
     }
     
-    /// Fit the detail (price) label in particular cell
+    /// Ajusta la etiqueta de detalle (precio) en una celda específica
     func fitDetailLabel(in cell: UITableViewCell) {        
-        // get the image view
+        // obtiene la vista de imagen
         guard let imageView = cell.imageView else { return }
         
-        // get the main text label
+        // obtiene la etiqueta de texto principal
         guard let textLabel = cell.textLabel else { return }
         
-        // get the detail text label
+        // obtiene la etiqueta de texto de detalle
         guard let detailTextLabel = cell.detailTextLabel else { return }
         
-        // get the widht of image view
+        // obtiene el ancho de la vista de imagen
         let imageWidth = imageView.frame.width
         
-        // remember the original width of main text label
+        // recuerda el ancho original de la etiqueta de texto principal
         let textWidth = textLabel.frame.width
         
-        // remember the original width of detail text label
+        // recuerda el ancho original de la etiqueta de texto de detalle
         let detailWidth = detailTextLabel.frame.width
         
-        // calculate the total width of image and two labels (could be less than cell width)
+        // calcula el ancho total de la imagen y las dos etiquetas (puede ser menor que el ancho de la celda)
         let totalWidth = imageWidth + textWidth + detailWidth
         
-        // fit the detail text label
+        // ajusta la etiqueta de texto de detalle
         detailTextLabel.sizeToFit()
         
-        // make sure the image width does not change
+        // asegura que el ancho de la imagen no cambie
         imageView.frame.size.width = imageWidth
         
-        // get the new detail text label width
+        // obtiene el nuevo ancho de la etiqueta de texto de detalle
         let newDetailWidth = detailTextLabel.frame.width
         
-        // calculate the new main text label width based on detailed text label widht
+        // calcula el nuevo ancho de la etiqueta de texto principal basado en el ancho de la etiqueta de detalle
         let newTextWidth = totalWidth - imageWidth - newDetailWidth
         
-        // if there are no changes needed — exit
+        // si no se necesitan cambios, salir
         guard newTextWidth < textWidth else { return }
         
-        // set the new width of main text label
+        // establece el nuevo ancho de la etiqueta de texto principal
         textLabel.frame.size.width = newTextWidth
         
-        // fit the width with new font
+        // ajusta el ancho con la nueva fuente
         textLabel.adjustsFontSizeToFitWidth = true
         
-        // move the new origin of detail text label
+        // mueve el nuevo origen de la etiqueta de texto de detalle
         detailTextLabel.frame.origin.x -= newDetailWidth - detailWidth
     }
     
-    /// Fit image in particular cell
+    /// Ajusta la imagen en una celda específica
     func fitImage(in cell: UITableViewCell) {
-        // check if we can get the image view
+        // verifica si se puede obtener la vista de imagen
         guard let imageView = cell.imageView else { return }
         
-        // remember the old image view width
+        // recuerda el ancho anterior de la vista de imagen
         let oldWidth = imageView.frame.width
         
-        // set the image view size
+        // establece el tamaño de la vista de imagen
         imageView.frame.size = CGSize(width: 100, height: 100)
         
-        // calculate the shift to the left
+        // calcula el desplazamiento hacia la izquierda
         let leftShift = oldWidth - imageView.frame.width
         
-        // get the main text label
+        // obtiene la etiqueta de texto principal
         guard let textLabel = cell.textLabel else { return }
 
-        // move the label left
+        // mueve la etiqueta hacia la izquierda
         textLabel.frame.origin.x -= leftShift        
     }
 }

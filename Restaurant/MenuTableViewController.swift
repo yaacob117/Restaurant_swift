@@ -1,175 +1,171 @@
-//
 //  MenuTableTableViewController.swift
 //  Restaurant
 //
-//  Created by Denis Bystruev on 05/06/2018.
-//  Copyright © 2018 Denis Bystruev. All rights reserved.
-//
-//  View controller for the screen after the category was selected
+//  Controlador de vista para la pantalla después de que se seleccionó la categoría
 
 import UIKit
 
 class MenuTableViewController: UITableViewController {
-    /// The category name we should receive from CategoryTableViewController
+    /// El nombre de la categoría que deberíamos recibir de CategoryTableViewController
     var category: String!
     
-    /// Array of menu items to be displayed in the table
+    /// Array de elementos del menú que se mostrarán en la tabla
     var menuItems = [MenuItem]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Table title is capitalized category name
+        // El título de la tabla es el nombre de la categoría en mayúsculas
         title = category.capitalized
         
-        // Load the menu for a given category
+        // Cargar el menú para una categoría dada
         MenuController.shared.fetchMenuItems(categoryName: category) { (menuItems) in
-            // if we indeed got the menu items
+            // si realmente obtuvimos los elementos del menú
             if let menuItems = menuItems {
-                // update the interface
+                // actualizar la interfaz
                 self.updateUI(with: menuItems)
             }
         }
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        // fit the detail (price) labels
+        // ajustar las etiquetas de detalle (precio)
         fitDetailLabels()
     }
     
     override func viewWillLayoutSubviews() {
-        // fit the detail (price) labels
+        // ajustar las etiquetas de detalle (precio)
         fitDetailLabels()
     }
     
-    /// Set the property and update the interface
+    /// Establecer la propiedad y actualizar la interfaz
     func updateUI(with menuItems: [MenuItem]) {
-        // have to go back to main queue from background queue where network requests are exectured
+        // tenemos que volver a la cola principal desde la cola de fondo donde se ejecutan las solicitudes de red
         DispatchQueue.main.async {
-            // remember the menu items for diplaying in the table
+            // recordar los elementos del menú para mostrarlos en la tabla
             self.menuItems = menuItems
             
-            // reload the table
+            // recargar la tabla
             self.tableView.reloadData()
         }
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        // Liberar cualquier recurso que pueda ser recreado.
     }
 
-    // MARK: - Table view data source
+    // MARK: - Fuente de datos de la tabla
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // there is only one section
+        // solo hay una sección
         return 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // the number of cells is equal to the size of menu items array
+        // el número de celdas es igual al tamaño del array de elementos del menú
         return menuItems.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        // reuse the menu list prototype cell
+        // reutilizar la celda prototipo de la lista del menú
         let cell = tableView.dequeueReusableCell(withIdentifier: "MenuCellIdentifier", for: indexPath)
 
-        // configure the cell with menu list data
+        // configurar la celda con los datos de la lista del menú
         configure(cell: cell, forItemAt: indexPath)
 
         return cell
     }
     
-    /// Configure the table cell with menu list data
-    /// - parameters:
-    ///     - cell: The cell to be configured
-    ///     - indexPath: An index path locating a row in tableView
+    /// Configurar la celda de la tabla con los datos de la lista del menú
+    /// - parámetros:
+    ///     - cell: La celda a configurar
+    ///     - indexPath: Una ruta de índice que localiza una fila en tableView
     func configure(cell: UITableViewCell, forItemAt indexPath: IndexPath) {
-        // get the needed menu item for corresponding table row
+        // obtener el elemento del menú necesario para la fila correspondiente de la tabla
         let menuItem = menuItems[indexPath.row]
         
-        // the left label of the cell should display the name of the item
+        // la etiqueta izquierda de la celda debe mostrar el nombre del elemento
         cell.textLabel?.text = menuItem.name
         
-        // the right label displays the price along with currency symbol
+        // la etiqueta derecha muestra el precio junto con el símbolo de la moneda
         cell.detailTextLabel?.text = String(format: "$%.2f", menuItem.price)
         
-        // fetch the image from the server
+        // obtener la imagen del servidor
         MenuController.shared.fetchImage(url: menuItem.imageURL) { image in
-            // check that the image was fetched successfully
+            // verificar que la imagen se obtuvo correctamente
             guard let image = image else { return }
             
-            // return to main thread after the network request in background
+            // volver al hilo principal después de la solicitud de red en segundo plano
             DispatchQueue.main.async {
-                // get the current index path
+                // obtener la ruta de índice actual
                 guard let currentIndexPath = self.tableView.indexPath(for: cell) else { return }
                 
-                // check if the cell was not yet recycled
+                // verificar si la celda aún no se recicló
                 guard currentIndexPath == indexPath else { return }
                 
-                // set the thumbnail image
+                // establecer la imagen en miniatura
                 cell.imageView?.image = image
                 
-                // fit the image to the cell
+                // ajustar la imagen a la celda
                 self.fitImage(in: cell)
             }
         }
     }
     
-    // adjust the cell height to make images look better
+    // ajustar la altura de la celda para que las imágenes se vean mejor
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 100
     }
 
     /*
-    // Override to support conditional editing of the table view.
+    // Anular para admitir la edición condicional de la vista de tabla.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
+        // Devuelve false si no deseas que el elemento especificado sea editable.
         return true
     }
     */
 
     /*
-    // Override to support editing the table view.
+    // Anular para admitir la edición de la vista de tabla.
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            // Delete the row from the data source
+            // Eliminar la fila de la fuente de datos
             tableView.deleteRows(at: [indexPath], with: .fade)
         } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
+            // Crear una nueva instancia de la clase apropiada, insertarla en el array y agregar una nueva fila a la vista de tabla
         }    
     }
     */
 
     /*
-    // Override to support rearranging the table view.
+    // Anular para admitir la reorganización de la vista de tabla.
     override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
 
     }
     */
 
     /*
-    // Override to support conditional rearranging of the table view.
+    // Anular para admitir la reorganización condicional de la vista de tabla.
     override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
+        // Devuelve false si no deseas que el elemento sea reordenable.
         return true
     }
     */
 
-    // MARK: - Navigation
+    // MARK: - Navegación
 
-    /// Passes MenuItem to MenuItemDetailViewController before the segue
+    /// Pasa MenuItem a MenuItemDetailViewController antes del segue
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // checks this segue is from MenuTableViewController to MenuItemDetailViewController
+        // verifica que este segue sea de MenuTableViewController a MenuItemDetailViewController
         if segue.identifier == "MenuDetailSegue" {
-            // we can safely downcast to MenuItemDetailViewController
+            // podemos convertir de manera segura a MenuItemDetailViewController
             let menuItemDetailViewController = segue.destination as! MenuItemDetailViewController
             
-            // selected cell's row is the index for array of menuItems
+            // la fila de la celda seleccionada es el índice para el array de menuItems
             let index = tableView.indexPathForSelectedRow!.row
             
-            // pass selected menuItem to destination MenuItemDetailViewController
+            // pasar el menuItem seleccionado al destino MenuItemDetailViewController
             menuItemDetailViewController.menuItem = menuItems[index]
         }
     }
